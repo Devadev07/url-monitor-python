@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" href="data:,">
+</head>
+
+<body>
+
+<script>
+if (!localStorage.getItem("user_id")) {
+    window.location.href = "login.html";
+}
+</script>
+
+<h1>URL Dashboard</h1>
+<button onclick="logout()" class="logout-btn">Logout</button>
+
+<div class="card">
+    <h2>Add URL</h2>
+    <input id="urlAddress" placeholder="https://example.com">
+    <button onclick="addUrl()">Add URL</button>
+</div>
+
+<div class="card">
+    <h2>Refresh URLs</h2>
+    <button onclick="refreshUrls()">Refresh</button>
+</div>
+
+<div class="card">
+    <h2>URL TABLE</h2>
+    <table id="urlTable">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>URL</th>
+                <th>Status</th>
+                <th>Response Time</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
+<script src="url.js"></script>
+
+</body>
+</html>
