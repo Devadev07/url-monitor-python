@@ -1,6 +1,7 @@
 from sqlalchemy.exc import IntegrityError
 from ..repositories.user_repository import UserRepository
-from ..core.security import hash_password, verify_password
+from ..core.security import verify_password, create_access_token
+from ..models.user_model import User
 import bcrypt
 
 
@@ -20,23 +21,19 @@ class UserService:
             hashed
         )
 
-    def login(self, db, user):
-        db_user = self.repository.get_user_by_username(
-            db,
-            user.username
-        )
+    def login(self, db, user_data):
+        user = db.query(User).filter(User.username == user_data.username).first()
 
-        if not db_user:
-            return {"message": "User not found"}
+        if not user:
+           return {"message": "User not found"}
 
-        if bcrypt.checkpw(
-            user.password.encode(),
-            db_user.password.encode()
-        ):
-            return {
-                "message": "Login success",
-                "id": db_user.id,
-                "username": db_user.username
-            }
+        if not verify_password(user_data.password, user.password):
+           return {"message": "Invalid password"}
 
-        return {"message": "Wrong password"}
+        token = create_access_token({"sub": user.username})
+
+        return {
+            "access_token": token,
+            "token_type": "bearer",
+            "id": user.id
+        }

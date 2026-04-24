@@ -21,14 +21,18 @@ It allows users to:
 * User signup
 * User login
 * Password hashing using bcrypt
+* JWT token generation with expiry
+* Protected routes using Bearer token
 
 ### URL Monitoring
 
 * Add URLs
 * Delete URLs
+* Check single URL
 * Refresh all URLs
 * Check status (UP / DOWN)
 * Response time tracking
+* Failure reason tracking
 
 ### Database
 
@@ -40,10 +44,11 @@ Tables used:
 
 ### Logging
 
-System logs URL check results in terminal.
+System logs URL checks using Python logging with INFO, WARNING, and ERROR levels.
 
 Example:
-Checked URL: https://google.com, Status: UP, Response: 1368ms
+
+2026-04-25 00:10:11 - INFO - https://google.com UP 1368ms
 
 ---
 
@@ -94,7 +99,7 @@ python -m uvicorn app.main:app --reload
 
 ### 6. Run frontend
 
-Open frontend folder using Live Server
+python -m http.server 5500
 
 ---
 
@@ -102,8 +107,8 @@ Open frontend folder using Live Server
 
 Example:
 
-username: demo
-password: 123
+username: demo  
+password: 1234
 
 ---
 
@@ -122,12 +127,27 @@ Database stores user URLs and monitoring history.
 
 ---
 
-## Design Decisions and Tradeoffs
+## Design Notes
 
-* FastAPI chosen for simplicity and speed
-* MySQL chosen for relational structure
-* Frontend kept lightweight for quick interaction
-* JWT was not fully implemented to keep focus on core monitoring logic
+### Concurrency
+
+URL checks were changed from sequential execution to concurrent async execution using asyncio.gather(), allowing multiple URLs to be checked at the same time. This prevents one slow or failed URL from blocking others. The tradeoff is that very large batches may require concurrency limits later to control resource usage.
+
+### Scheduling
+
+A background scheduler using APScheduler was added so checks run automatically at fixed intervals and restart when the server restarts. URL check intervals are stored per URL for future extensibility. The current tradeoff is that scheduling runs in periodic batches rather than fully separate per-URL jobs.
+
+### Authentication
+
+JWT authentication was implemented end to end using token generation during login, token expiry, and protected routes requiring Bearer tokens. This keeps authentication stateless and simple for frontend integration. The tradeoff is that token invalidation before expiry would require additional token revocation logic later.
+
+### Error Handling
+
+Explicit handling was added for invalid URLs, DNS failures, connection timeouts, and non-2xx HTTP responses. Failures are stored as DOWN status together with the reason in the database and shown in the dashboard. The tradeoff is that some lower-level network exceptions are grouped into broader categories for readability.
+
+### Logging
+
+Python logging replaced print statements, using INFO for successful checks, WARNING for DOWN results, and ERROR for exceptions. Logs include timestamps and context for each monitored URL. The tradeoff is that log rotation is not yet configured for long-running deployments.
 
 ---
 

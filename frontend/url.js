@@ -1,25 +1,31 @@
 const api = "http://127.0.0.1:8000";
 
 async function addUrl() {
-    const user_id = localStorage.getItem("user_id");
-
     await fetch(`${api}/add-url`, {
         method: "POST",
-        headers: {"Content-Type":"application/json"},
+        headers: {
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + localStorage.getItem("token")
+        },
         body: JSON.stringify({
             address: document.getElementById("urlAddress").value,
-            user_id: parseInt(user_id)
+            check_interval: parseInt(document.getElementById("interval").value) || 5
         })
     });
 
     document.getElementById("urlAddress").value = "";
+    document.getElementById("interval").value = "";
+
     getUrls();
 }
 
 async function getUrls() {
-    const user_id = localStorage.getItem("user_id");
+    const res = await fetch(`${api}/user-urls`, {
+        headers: {
+            "Authorization": "Bearer " + localStorage.getItem("token")
+        }
+    });
 
-    const res = await fetch(`${api}/user-urls/${user_id}`);
     const data = await res.json();
 
     const tbody = document.querySelector("#urlTable tbody");
@@ -40,7 +46,11 @@ async function getUrls() {
                     }
                 </td>
                 <td>${url.response_time ? url.response_time + " ms" : "-"}</td>
+                <td>${url.check_interval}</td>
+                <td>${url.reason || "-"}</td>
                 <td>
+                    <div style="display:flex;flex-direction:column;gap:5px;align-items:center;">
+                    <button onclick="checkUrl(${url.id})">Check</button>
                     <button onclick="deleteUrl(${url.id})">Delete</button>
                 </td>
             </tr>
@@ -48,46 +58,47 @@ async function getUrls() {
     });
 }
 
-async function checkUrl() {
-    const id = document.getElementById("checkId").value;
-
-    if (!id) {
-        alert("Enter URL ID");
-        return;
-    }
-
-    const res = await fetch(`${api}/check-url/${id}`, {
-        method: "POST"
-    });
-
-    if (!res.ok) {
-        alert("Invalid URL ID or URL not found");
-        return;
-    }
-
-    document.getElementById("checkId").value = "";
-    getUrls();
-}
-
 async function deleteUrl(id) {
     await fetch(`${api}/delete-url/${id}`, {
-        method: "DELETE"
+        method: "DELETE",
+        headers: {
+            "Authorization": "Bearer " + localStorage.getItem("token")
+        }
     });
 
     getUrls();
 }
 
 function logout() {
-    localStorage.removeItem("user_id");
+    localStorage.removeItem("token");
     window.location.href = "login.html";
 }
 
 async function refreshUrls() {
     await fetch(`${api}/check-all`, {
-        method: "POST"
+        method: "POST",
+        headers: {
+            "Authorization": "Bearer " + localStorage.getItem("token")
+        }
+    });
+
+    getUrls();
+}
+
+async function checkUrl(id) {
+    await fetch(`${api}/check-url/${id}`, {
+        method: "POST",
+        headers: {
+            "Authorization": "Bearer " + localStorage.getItem("token")
+        }
     });
 
     getUrls();
 }
 
 window.onload = getUrls;
+
+setInterval(getUrls, 30000);
+
+document.getElementById("welcomeUser").innerText =
+    "Logged in as: " + localStorage.getItem("username");

@@ -9,22 +9,26 @@
 <body>
 
 <script>
-if (!localStorage.getItem("user_id")) {
+if (!localStorage.getItem("token")) {
     window.location.href = "login.html";
 }
 </script>
 
 <h1>URL Dashboard</h1>
+
+<p id="welcomeUser"></p>
+
 <button onclick="logout()" class="logout-btn">Logout</button>
 
 <div class="card">
     <h2>Add URL</h2>
     <input id="urlAddress" placeholder="https://example.com">
+    <input id="interval" type="number" placeholder="Interval (minutes)">
     <button onclick="addUrl()">Add URL</button>
 </div>
 
 <div class="card">
-    <h2>Refresh URLs</h2>
+    <h2>Refresh Now</h2>
     <button onclick="refreshUrls()">Refresh</button>
 </div>
 
@@ -37,6 +41,8 @@ if (!localStorage.getItem("user_id")) {
                 <th>URL</th>
                 <th>Status</th>
                 <th>Response Time</th>
+                <th>Interval</th>
+                <th>Reason</th>
                 <th>Action</th>
             </tr>
         </thead>

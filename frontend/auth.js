@@ -3,7 +3,9 @@ const api = "http://127.0.0.1:8000";
 async function login() {
     const res = await fetch(`${api}/login`, {
         method: "POST",
-        headers: {"Content-Type":"application/json"},
+        headers: {
+            "Content-Type": "application/json"
+        },
         body: JSON.stringify({
             username: document.getElementById("loginUsername").value,
             password: document.getElementById("loginPassword").value
@@ -12,18 +14,28 @@ async function login() {
 
     const data = await res.json();
 
-    if (data.id) {
-        localStorage.setItem("user_id", data.id);
+    if (data.access_token) {
+        localStorage.setItem("token", data.access_token);
+
+        localStorage.setItem(
+            "username",
+            document.getElementById("loginUsername").value
+        );
+
+        alert("Login successful");
+
         window.location.href = "dashboard.html";
     } else {
-        alert(data.message);
+        alert("Login failed");
     }
 }
 
 async function signup() {
     const res = await fetch(`${api}/signup`, {
         method: "POST",
-        headers: {"Content-Type":"application/json"},
+        headers: {
+            "Content-Type": "application/json"
+        },
         body: JSON.stringify({
             username: document.getElementById("signupUsername").value,
             password: document.getElementById("signupPassword").value
@@ -32,5 +44,9 @@ async function signup() {
 
     const data = await res.json();
 
-    alert(data.message || "Signup successful");
+    if (res.ok) {
+        alert("Signup successful");
+    } else {
+        alert(data.detail);
+    }
 }

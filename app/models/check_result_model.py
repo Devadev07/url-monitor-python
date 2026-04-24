@@ -10,3 +10,4 @@ class CheckResult(Base):
     status = Column(String(20))
     response_time = Column(Integer, nullable=True)
     checked_at = Column(DateTime, default=datetime.utcnow)
+    reason = Column(String(255), nullable=True)

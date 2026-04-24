@@ -3,11 +3,14 @@ body {
     background: #f4f6f8;
     text-align: center;
     padding: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .card {
     background: white;
-    width: 600px;
+    width: 760px;
     margin: 20px auto;
     padding: 25px;
     border-radius: 12px;
@@ -16,7 +19,7 @@ body {
 
 input {
     padding: 10px;
-    width: 250px;
+    width: 220px;
     margin: 10px;
 }
 
@@ -29,18 +32,13 @@ button {
     cursor: pointer;
 }
 
-table {
-    width: 100%;
-    border-collapse: collapse;
+button:hover {
+    opacity: 0.9;
 }
 
-th, td {
-    padding: 12px;
-    border-bottom: 1px solid #ddd;
-}
-
-th {
-    background: #f0f0f0;
+.logout-btn {
+    margin-bottom: 20px;
+    background: crimson;
 }
 
 table {
@@ -48,29 +46,35 @@ table {
     margin-top: 20px;
     border-collapse: collapse;
     text-align: center;
+    table-layout: fixed;
 }
 
 th, td {
     padding: 12px;
     border-bottom: 1px solid #ddd;
+    vertical-align: middle;
+    word-wrap: break-word;
 }
 
 th {
+    background: #f0f0f0;
     font-weight: bold;
 }
 
-body {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+td button {
+    min-width: 95px;
+    padding: 8px 12px;
+    margin: 3px;
+    white-space: nowrap;
 }
 
-.logout-btn {
-    margin-bottom: 20px;
-    background: crimson;
-    color: white;
-    border: none;
-    padding: 10px 18px;
-    border-radius: 6px;
-    cursor: pointer;
+#welcomeUser {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    font-weight: bold;
+    color: #333;
+}
+
+td {
+    overflow-wrap: anywhere;
 }
