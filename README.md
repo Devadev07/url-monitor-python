@@ -105,10 +105,7 @@ python -m http.server 5500
 
 ## Sample Login Credentials
 
-Example:
-
-username: demo  
-password: 1234
+Sample credentials can be created using signup from the frontend login page.
 
 ---
 
