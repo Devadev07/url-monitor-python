@@ -48,7 +48,7 @@ System logs URL checks using Python logging with INFO, WARNING, and ERROR levels
 
 Example:
 
-2026-04-25 00:10:11 - INFO - https://google.com UP 1368ms
+2026-04-25 00:10:11 - INFO - URL checked successfully (google.com) - 1368ms
 
 ---
 
